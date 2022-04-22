@@ -9,7 +9,6 @@ from django.shortcuts import HttpResponse
 
 
 def get_user_data(auth_token):
-    print(auth_token)
     user_data = jwt.decode(auth_token, settings.SECRET_KEY, algorithms=['HS256'])
 
 
