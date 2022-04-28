@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 
 def natual_key(self):
-    return {'first_name':self.first_name,'last_name':self.last_name, 'email': self.email}
+    return {'first_name':self.first_name,'last_name':self.last_name, 'email': self.email, 'username':self.username}
 
 User.natural_key = natual_key
 

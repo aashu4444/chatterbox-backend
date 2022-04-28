@@ -7,4 +7,5 @@ urlpatterns = [
     path('send/', views.send_invite),
     path('cancel/', views.cancel_invite),
     path('accept/', views.accept_invite),
+    path('isInvited/', views.isInvited),
 ]
