@@ -1,3 +1,4 @@
+from django.dispatch import receiver
 from django.http import JsonResponse
 from django.shortcuts import HttpResponse
 from pip import main
@@ -11,6 +12,7 @@ import jwt, json
 from django.conf import settings
 from django.db.models import Q
 from utils import get_user_data
+from invite.models import Invite
 
 def get_by_auth_token(request):
     try:
@@ -90,9 +92,27 @@ def search_user(request):
         if request.method == "GET":
             query = request.GET["query"]
 
-            main_user = Main_user.objects.filter(Q(user__first_name__iexact=query) | Q(user__last_name__iexact=query) | Q(user__email__iexact=query))
+            main_users = Main_user.objects.filter(Q(user__first_name__iexact=query) | Q(user__last_name__iexact=query) | Q(user__email__iexact=query))
             
-            return JsonResponse(json.loads(serializers.serialize("json", main_user, use_natural_foreign_keys=True, use_natural_primary_keys=True)), safe=False)
+            if request.GET.get("addIsInvited") != None:
+                def isInvited(item):
+                    try:
+                        loggedin_user = Main_user.objects.get(id=get_user_data(request.headers.get("auth-token")).get("main_user_id"))
+                        
+                        invite = Invite.objects.filter(sender=loggedin_user, reciever=item)
+
+                        if invite.count() == 0:
+                            return {"isInvited": True}.update(item)
+
+                        return item
+                    except Exception as e:
+                        print("Exception : ", e)
+                        return item
+
+                print(list(map(isInvited, main_users)))
+
+
+            return JsonResponse(json.loads(serializers.serialize("json", main_users, use_natural_foreign_keys=True, use_natural_primary_keys=True)), safe=False)
 
     except Exception as e:
         print(e)

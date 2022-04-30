@@ -86,27 +86,3 @@ def accept_invite(request, user_data):
         print(e)
         return HttpResponse("Internal server error!", 500)
 
-
-@login_required
-@csrf_exempt
-def isInvited(request, user_data):
-    try:
-        if request.method == "GET":
-            target_user_id = request.GET["target_user_id"]
-            loggedin_user = Main_user.objects.get(id=user_data["main_user_id"])
-
-            try:
-                target_user = Main_user.objects.get(id=int(target_user_id))
-                sender = loggedin_user
-            except Invite.DoesNotExist as e:
-                return HttpResponse("target user or invite reciever not found!", status=404)
-
-            invite = Invite.objects.filter(sender=sender, reciever=target_user)
-            
-            if invite.count() == 0:
-                return HttpResponse("false")
-            
-            return HttpResponse("true")
-    except Exception as e:
-        print(e)
-        return HttpResponse("Internal server error!", 500)
