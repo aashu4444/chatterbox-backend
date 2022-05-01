@@ -101,18 +101,18 @@ def search_user(request):
                         
                         invite = Invite.objects.filter(sender=loggedin_user, reciever=item)
 
-                        if invite.count() == 0:
-                            return {"isInvited": True}.update(item)
+                        if invite.count() == 1:
+                            main_data = {key:value for key, value in json.loads(item.stringify()).items()}
+                            main_data.update({"isInvited":True})
+                            return json.dumps(main_data)
 
-                        return item
+                        return item.stringify(dump=False)
                     except Exception as e:
                         print("Exception : ", e)
-                        return item
-
-                print(list(map(isInvited, main_users)))
+                        return item.stringify(dump=False)
 
 
-            return JsonResponse(json.loads(serializers.serialize("json", main_users, use_natural_foreign_keys=True, use_natural_primary_keys=True)), safe=False)
+            return HttpResponse(json.dumps(list(map(isInvited, main_users))))
 
     except Exception as e:
         print(e)

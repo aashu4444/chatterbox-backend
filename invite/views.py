@@ -86,3 +86,33 @@ def accept_invite(request, user_data):
         print(e)
         return HttpResponse("Internal server error!", 500)
 
+
+
+@login_required
+@csrf_exempt
+def getSentInvites(request, user_data):
+    try:
+        if request.method == "GET":
+            sent_invites = Invite.objects.filter(sender=Main_user.objects.get(id=user_data["main_user_id"]))
+
+
+
+
+            return HttpResponse(serializers.serialize('json', sent_invites, use_natural_foreign_keys=True))
+    except Exception as e:
+        print(e)
+        return HttpResponse("Internal server error!", 500)
+
+
+@login_required
+@csrf_exempt
+def getRecievedInvites(request, user_data):
+    try:
+        if request.method == "GET":
+            recieved_invites = Invite.objects.filter(reciever=Main_user.objects.get(id=user_data["main_user_id"]))
+
+            return HttpResponse(serializers.serialize('json', recieved_invites, use_natural_foreign_keys=True))
+    except Exception as e:
+        print(e)
+        return HttpResponse("Internal server error!", 500)
+
