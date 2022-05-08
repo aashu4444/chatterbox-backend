@@ -6,12 +6,11 @@ from django.core import serializers
 
 
 def natual_key(self):
-    return {'first_name': self.first_name, 'last_name': self.last_name, 'email': self.email, 'username': self.username}
+    return {'first_name': self.first_name, 'last_name': self.last_name, 'email': self.email, 'username': self.username, "user_id":self.id}
 
 
 User.natural_key = natual_key
 
-# Create your models here.
 
 
 class Main_user(models.Model):
@@ -41,6 +40,8 @@ class Main_user(models.Model):
                 'email': self.user.email,
                 'username': self.user.username,
                 'phone': self.phone,
+                'main_user_id':self.id,
+                'asds':'aa'
         }
 
     def __str__(self):

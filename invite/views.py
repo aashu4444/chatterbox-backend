@@ -59,6 +59,7 @@ def cancel_invite(request, user_data):
 def accept_invite(request, user_data):
     try:
         if request.method == "PUT":
+            print(request.body, request.__dict__)
             target_user_id = json.loads(request.body)["target_user_id"]
             loggedin_user = Main_user.objects.get(id=user_data["main_user_id"])
 
@@ -67,19 +68,15 @@ def accept_invite(request, user_data):
                 reciever = loggedin_user
             except Invite.DoesNotExist as e:
                 return HttpResponse("Sender/Reciever not found!", status=404)
+            
+            target_user = Main_user.objects.get(id=target_user_id)
 
             invite = Invite.objects.get(sender=sender, reciever=reciever)
-            invite.accepted = True
-            invite.save()
+            invite.delete()
 
-            friend_obj = Friend.objects.filter(user=loggedin_user)
+            friend_obj = Friend.objects.filter(user=loggedin_user, friend=target_user)
             if friend_obj.count() == 0:
-                Friend.objects.create(user=loggedin_user, friends=[serializers.serialize("json",[reciever])])
-            else:
-                friend_obj.friends = [user for user in friend_obj.friends].append(reciever)
-                friend_obj.save()
-
-
+                Friend.objects.create(user=loggedin_user, friend=target_user)
 
             return HttpResponse("Invite accepted successfully!")
     except Exception as e:
