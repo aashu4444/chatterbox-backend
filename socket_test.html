@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket Test</title>
+
+</head>
+
+<body>
+
+
+
+    <div id="app">
+        <h2 class="roomName">Room name : </h2>
+        <form id="msgForm">
+            <input type="text" placeholder="Enter message here!" value="#YouGotTheMessage">
+            <button type="submit">Send</button>
+        <form>
+    </div>
+
+    <script type="module">
+        const dataObj = {
+            room_name: 'chatting_with_john'
+        }
+
+        const roomName = document.querySelector(".roomName");
+        roomName.innerText = "Room Name : " + dataObj.room_name
+
+        document.querySelector("#msgForm").addEventListener("submit", e => {
+            e.preventDefault()
+            const msg = document.querySelector("input").value;
+
+            chatSocket.send(
+                JSON.stringify(
+                    {
+                        message: msg
+                    }
+                )
+            )
+        }
+        )
+
+
+        const chatSocket = new WebSocket(
+            'ws://127.0.0.1:8000/ws/message/'
+            + dataObj.room_name
+            + '/'
+        );
+
+        chatSocket.onopen = e => {
+            console.log("Socket connected!")
+        }
+
+
+        chatSocket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            console.log("A message received : " + data.message)
+        };
+
+        chatSocket.onclose = function (e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+
+    </script>
+</body>
+
+</html>
