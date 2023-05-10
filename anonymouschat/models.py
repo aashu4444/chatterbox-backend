@@ -73,6 +73,4 @@ def my_model_saved(sender, instance, created, **kwargs):
         message = json.loads(serializers.serialize('json', [instance]))[0]
         room_name = AnonymousChatRoom.objects.get(id=instance.room_id).name
 
-        print(message)
-        print(room_name)
         async_to_sync(channel_layer.group_send)(room_name, {'type': "chat_message", "message" : message})

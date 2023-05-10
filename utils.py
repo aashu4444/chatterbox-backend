@@ -20,6 +20,7 @@ def jwt_auth_required(func):
                     decoded_data = jwt.decode(auth_token, SECRET_KEY, algorithms=['HS256'])
                 
                 except Exception as e:
+                    print(auth_token)
                     return HttpResponse(status=500, content="Decode error: Inavlid Auth Token.")
 
                 return func(request, decoded_data, *args, **kwargs)

@@ -178,23 +178,23 @@ class ConnectionRequestView(View):
 
 
 
-@jwt_auth_required
-def validate(request, decoded_data):
-    print("It's validating!")
-    return JsonResponse(decoded_data)
 
 
 @jwt_auth_required
 def filter(request, decoded_data):
     if request.method == "GET":
         query = request.GET['query']
-        print(query)
-
         found_profiles = Profile.objects.filter(Q(user__first_name__icontains=query) | Q(
             user__last_name__icontains=query) | Q(user__username__icontains=query))
 
         return HttpResponse(json.dumps(serialize_profiles(found_profiles)))
 
+def get_user(request):
+    if request.method =='GET':
+        id = request.GET['id']
+        found_user = Profile.objects.get(id=id)
+
+        return JsonResponse(found_user.to_json())
 
 
 @jwt_auth_required
@@ -213,3 +213,29 @@ def get_connected_profiles(request, decoded_data):
 
         return JsonResponse(connected_profiles, safe=False)
 
+
+def change_status(decoded_data, status: dict):
+    # status = json.loads(request.body)['status']
+    profile = Profile.objects.get(id=decoded_data['id'])
+    profile.status = json.dumps(status)
+    profile.save()
+
+    return HttpResponse("Everythiing looks good!")
+
+
+@jwt_auth_required
+def get_status(request, decoded_data):
+    if request.method == 'GET':
+        target_user_id = request.GET['target_user_id']
+        profile = Profile.objects.get(id=target_user_id)
+        status = profile.get_status()
+
+        return JsonResponse(status)
+
+
+@jwt_auth_required
+def validate(request, decoded_data):
+    # Code If the user is logged in
+    change_status(decoded_data, {'status': "Active Now", 'code': 1})
+
+    return JsonResponse(decoded_data)

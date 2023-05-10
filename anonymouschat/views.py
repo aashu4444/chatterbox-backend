@@ -93,7 +93,13 @@ def get_messages(request):
 
 def get_room_names(request):
     if request.method == 'GET':
-        room_names = [item for item in AnonymousChatRoom.objects.values_list('name', flat=True)]
+        query = request.GET.get("query")
+
+        if query:
+            room_names = [item for item in AnonymousChatRoom.objects.filter(name__icontains=query).values('name')]
+
+        else:
+            room_names = [item for item in AnonymousChatRoom.objects.values_list('name', flat=True)]
         
         return JsonResponse(room_names, safe=False)
 

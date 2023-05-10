@@ -1,13 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
 import uuid
+import json
 
 class Profile(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     user = models.OneToOneField(User, models.CASCADE)
     connected_profiles = models.JSONField(default=list)
+    status = models.TextField(max_length=100, default="")
+
+    def get_status(self):
+        return json.loads(self.status)
 
     def connect_profile(self, connect_to_id):
         
@@ -29,7 +34,12 @@ class Profile(models.Model):
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'
 
+@receiver(post_save, sender=Profile)
+def profile_change_detector(sender, instance, **kwargs):
+    print('Something change here .....')
+    print(instance.status)
     
+  
     
 
 @receiver(post_save, sender=User)

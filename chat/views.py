@@ -19,8 +19,8 @@ def get_chat_messages(request, decoded_data):
             Q(sender__id=decoded_data['id']) | Q(receiver__id=decoded_data['id'])
         ).order_by('timestamp')
 
-        # Decrypt each chat message
-        chat_messages = map(lambda msg:msg.clean(), chat_messages)
+        # # Decrypt each chat message
+        # chat_messages = map(lambda msg:msg.clean(), chat_messages)
 
         serialized_chat_messages = json.loads(serializers.serialize('json', chat_messages))
         
