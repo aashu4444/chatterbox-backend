@@ -21,7 +21,7 @@ from django.http import HttpResponse
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', lambda request: HttpResponse("Index Page")),
+    path('', lambda request: HttpResponse("Index Page updated")),
     path('user/', include('user.urls')),
     path('message/', include('message.urls')),
     path('chat/', include('chat.urls')),
