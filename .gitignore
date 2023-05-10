@@ -1,2 +1,4 @@
 /chatterboxBackend/secret.py
 secret.py
+**/__pycache__
+migrations
