@@ -17,11 +17,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.http import HttpResponse
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', lambda request: HttpResponse("Index Page")),
     path('user/', include('user.urls')),
     path('message/', include('message.urls')),
+    path('chat/', include('chat.urls')),
     path('chat/', include('chat.urls')),
     path('anonymous_chat/', include('anonymouschat.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
